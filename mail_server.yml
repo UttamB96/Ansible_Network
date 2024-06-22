@@ -1,0 +1,46 @@
+- name: Fix Vulnerabilities on Mail Server
+  hosts: mail-server
+  become: true
+  become_user: root
+  tasks:
+    - name: Enable hush login
+      command:
+        cmd: touch ~/.hushlogin
+    - name: Ensure firewall package is installed
+      dnf:
+        name: firewalld
+        state: present
+    - name: Ensure firewall service is up and running
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+    - name: Allow ICMP packets from a particular host
+      command:
+        cmd: firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address=188.172.40.66 protocol value=icmp accept'
+    - name: Block all ICMP packets
+      command:
+        cmd: firewall-cmd --permanent --add-rich-rule='rule protocol value=icmp reject'
+    - name: Open only the necessary ports
+      ansible.posix.firewalld:
+        port: "{{ item }}"
+        state: enabled
+        permanent: true
+      loop:
+        - 22/tcp
+        - 25/tcp
+        - 443/tcp
+        - 587/tcp
+        - 110/tcp
+        - 995/tcp
+        - 143/tcp
+        - 993/tcp
+    - name: Set default zone to drop
+      command:
+        cmd: firewall-cmd --set-default-zone=drop
+    - name: Disable TCP timestamps
+      ansible.builtin.sysctl:
+        name: net.ipv4.tcp_timestamps
+        value: '0'
+        state: present
+        reload: yes

@@ -1,0 +1,58 @@
+all:
+ children:
+  topology:
+   children:
+    routers:
+     hosts:
+      inner-router:
+       ansible_user: admin
+       ansible_ssh_pass: Dalhousie@09876
+       ansible_host: 188.172.40.65
+       connection: network_cli
+       become: true
+       become_method: enable
+       become_password: Dalhousie@09876  
+      proxy-router:
+       ansible_user: admin
+       ansible_ssh_pass: Dalhousie@09876
+       ansible_host: 188.172.20.33
+       connection: network_cli
+       become: true
+       become_method: enable
+       become_password: Dalhousie@09876
+    firewalls:
+     hosts:
+      inner-firewall:
+       ansible_user: admin2
+       ansible_ssh_pass: Dalhousie@09876
+       ansible_host: 188.172.40.2
+       connection: network_cli
+       become: true
+       become_method: enable
+       become_password: Dalhousie@09876
+      outer-firewall:
+       ansible_user: admin1
+       ansible_ssh_pass: Dalhousie@09876
+       ansible_host: 188.172.20.2
+       connection: network_cli
+       become: true
+       become_method: enable
+       become_password: Dalhousie@09876
+    servers:
+     hosts:
+      web-server:
+       ansible_user: fedora
+       ansible_ssh_pass: fedora
+       ansible_host: 188.172.20.66
+       become: true
+       become_method: sudo
+       become_password: fedora
+      mail-server:
+       ansible_user: fedora
+       ansible_ssh_pass: fedora
+       ansible_host: 188.172.20.98
+       become: true
+       become_method: sudo
+       become_password: fedora
+     vars:
+      ansible_connection: ssh

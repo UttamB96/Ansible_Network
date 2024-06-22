@@ -1,0 +1,72 @@
+- name: Fix Firewall Vulnerabilities
+  hosts: outer-firewall
+  become: true
+  become_method: enable
+  become_password: Dalhousie@09876
+  vars_files:
+    - ./var/ofirewall_var.yml
+  tasks:
+    - name: Deny ICMP Packets
+      cisco.ios.ios_command:
+        commands:
+          - command: configure terminal
+          - command: policy-map global_policy
+          - command: class inspection_default
+          - command: inspect icmp
+          - command: exit
+          - command: exit
+          - command: icmp permit host 188.172.40.66 echo outside
+          - command: icmp permit host 188.172.40.66 echo inside
+          - command: icmp deny any outside
+          - command: exit
+    - name: Enable threat detection and block port scanning
+      cisco.ios.ios_command:
+        commands:
+          - command: configure terminal
+          - command: threat-detection basic-threat
+          - command: threat-detection scanning-threat shun except ip-address 188.172.40.66
+          - command: exit
+    - name: Disable ssh version 1
+      cisco.ios.ios_command:
+        commands:
+          - command: configure terminal
+          - command: ssh version 2
+          - command: end
+    - name: Disable unused services and ports
+      cisco.ios.ios_command:
+        commands:
+          - command: configure terminal
+          - command: no http server Enable
+          - command: no tenet 0.0.0.0 0.0.0.0 inside
+          - command: no snmp-server enable
+          - command: exit
+    - name: Prevent TCP DoS attack
+      cisco.ios.ios_command:
+        commands:
+          - command: configure terminal
+          - command: tcp-map tcp-dos-normal
+          - command: no check-retransmission
+          - command: no checksum-verification
+          - command: exceed-mss allow
+          - command: queue-limit 0 timeout 4
+          - command: reserved-bits allow
+          - command: syn-data allow
+          - command: synack-data drop
+          - command: invalid-ack drop
+          - command: seq-past-window drop
+          - command: tcp-options range 6 7 clear
+          - command: class-map tcp-class
+          - command: match any
+          - command: policy-map tcp-policy
+          - command: class tcp-class
+          - command: set connection advanced-options tcp-dos-normal
+          - command: service-policy tcp-policy interface outside
+          - command: exit
+    - name: Disable weak mac algorithms
+      cisco.ios.ios_command:
+        commands:
+          - command: configure terminal
+          - command: ip ssh server algorithm mac hmac-sha2-256 hmac-sha2-512
+          - command: no ip ssh server algorithm mac hmac-sha1
+          - command: no ip ssh server algorithm mac hmac-sha1-96
+          - command: exit

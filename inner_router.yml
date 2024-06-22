@@ -1,0 +1,70 @@
+- name: Fix Router Vulnerabilities
+  hosts: inner-router
+  vars_files:
+    - ./var/router_var.yml
+  tasks:
+    - name: Download Router Software
+      cisco.ios.ios_command:
+        commands:
+         - command: enable
+         - command: copy tftp flash
+           prompt:
+             - 'Address or name of remote host []?'
+             - 'Source filename []?'
+             - 'Destination filename []?'
+           answer:
+             - '188.172.40.66'
+             - 'c7200-adventerprisek9-mz.152-4.S6.bin'
+             - 'c7200-adventerprisek9-mz.152-4.S6.bin'
+    - name: Update IOS version
+      cisco.ios.ios_command:
+        commands:
+          - command: boot system flash c7200-adventerprisek9-mz.152-4.S6.bin
+            prompt: 'System configuration has been modified. Save? [yes/no]'
+            answer: 'yes'
+          - command: reload
+          - command: show version
+    - name: Block ICMP Packets
+      cisco.ios.ios_command:
+        commands:
+          - command: configure terminal
+          - command: access-list 100 permit icmp host 188.172.40.66 any
+          - command: access-list 100 deny icmp any any
+          - command: interface g0/0
+          - command: ip access-group 100 in
+          - command: interface g1/0
+          - command: ip access-group 100 in
+          - command: interface g2/0
+          - command: ip access-group 100 in
+          - command: exit
+    - name: Disable IP SSH ver 1
+      cisco.ios.ios_command:
+        commands:
+          - command: configure terminal
+          - command: no ip ssh ver
+          - command: exit
+    - name: Disable weak mac algorithms
+      cisco.ios.ios_command:
+        commands:
+        - command: configure terminal
+        - command: no ip ssh server algorithm mac hmac-sha1
+        - command: exit
+    - name: Disable unused services
+      cisco.ios.ios_command:
+        commands:
+        - command: configure terminal
+        - command: no boot network
+        - command: no ip boot server
+        - command: no ip bootp server
+        - command: no ip dns server
+        - command: no ip identd
+        - command: no ip finger
+        - command: no ip http server
+        - command: no ip rcmd rcp-enable
+        - command: no ip rcmd rsh-enable
+        - command: no service configuration
+        - command: no service finger
+        - command: no service tcp-small-servers
+        - command: no service udp-small-servers
+        - command: no service pad
+        - command: exit

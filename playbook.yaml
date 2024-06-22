@@ -1,0 +1,6 @@
+- import_playbook: outer_firewall.yml
+- import_playbook: web_server.yml
+- import_playbook: mail_server.yml
+- import_playbook: proxy_router.yml
+- import_playbook: inner_firewall.yml
+- import_playbook: inner_router.yml

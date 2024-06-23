@@ -1,15 +1,13 @@
 - name: Fix Firewall Vulnerabilities
   hosts: outer-firewall
   become: true
-  become_method: enable
-  become_password: Dalhousie@09876
   vars_files:
     - ./var/ofirewall_var.yml
   tasks:
-    - name: Enter enable mode
+    - name: Enter configure mode
       cisco.ios.ios_command:
         commands:
-          - command: enable
+          - command: config t
       vars:
         ansible_become_pass: Dalhousie@09876
     - name: Deny ICMP Packets

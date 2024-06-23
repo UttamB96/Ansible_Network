@@ -55,4 +55,4 @@
           - command: class tcp-class
           - command: set connection advanced-options tcp-dos-normal
           - command: service-policy tcp-policy interface outside
-          - comamnd: exit
+          - command: exit

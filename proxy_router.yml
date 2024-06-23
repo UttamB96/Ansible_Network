@@ -13,7 +13,6 @@
       ignore_errors: true
       cisco.ios.ios_command:
         commands:
-          - command: enable
           - command: copy tftp flash
             prompt:
              - 'Address or name of remote host []?'

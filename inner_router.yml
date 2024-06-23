@@ -1,5 +1,6 @@
 - name: Fix Router Vulnerabilities
   hosts: inner-router
+  become: true
   vars_files:
     - ./var/router_var.yml
   tasks:

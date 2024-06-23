@@ -6,10 +6,6 @@
     - name: Enable hush login
       command:
         cmd: touch ~/.hushlogin
-    - name: Ensure firewall package is installed
-      dnf:
-        name: firewalld
-        state: present
     - name: Ensure firewall service is up and running
       service:
         name: firewalld

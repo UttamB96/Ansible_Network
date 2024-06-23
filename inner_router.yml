@@ -9,28 +9,6 @@
          - command: enable
       vars:
         ansible_become_pass: Dalhousie@09876
-    - name: Download Router Software
-      ignore_errors: true
-      cisco.ios.ios_command:
-        commands:
-         - command: copy tftp flash
-           prompt:
-             - 'Address or name of remote host []?'
-             - 'Source filename []?'
-             - 'Destination filename []?'
-           answer:
-             - '188.172.40.66'
-             - 'c7200-adventerprisek9-mz.152-4.S6.bin'
-             - 'c7200-adventerprisek9-mz.152-4.S6.bin'
-    - name: Update IOS version
-      ignore_errors: true
-      cisco.ios.ios_command:
-        commands:
-          - command: boot system flash c7200-adventerprisek9-mz.152-4.S6.bin
-            prompt: 'System configuration has been modified. Save? [yes/no]'
-            answer: 'yes'
-          - command: reload
-          - command: show version
     - name: Disable IP SSH ver 1
       cisco.ios.ios_command:
         commands:

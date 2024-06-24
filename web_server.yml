@@ -17,6 +17,12 @@
     - name: Block all ICMP packets
       command:
         cmd: firewall-cmd --permanent --add-rich-rule='rule protocol value=icmp reject'
+    - name: Allow ssh connection
+      command:
+        cmd: firewall-cmd --permanent --add-port=22/tcp
+    - name: Restart firewall service
+      command:
+        cmd: systemctl restart firewalld 
     - name: Open only the necessary ports
       ansible.posix.firewalld:
         port: "{{ item }}"

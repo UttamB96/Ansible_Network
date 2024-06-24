@@ -1,12 +1,13 @@
 - name: Fix Firewall Vulnerabilities
   hosts: inner-firewall
+  become: true
   vars_files:
     - ./var/ifirewall_var.yml
   tasks:
-    - name: Enter enable mode
+    - name: Enter configure mode
       cisco.ios.ios_command:
         commands:
-          - command: enable
+          - command: config t
       vars:
         ansible_become_pass: Dalhousie@09876
     - name: Deny ICMP Packets

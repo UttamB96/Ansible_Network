@@ -18,6 +18,7 @@
     - name: Disable unused services
       cisco.ios.ios_command:
         commands:
+        - command: config t
         - command: no boot network
         - command: no ip boot server
         - command: no ip bootp server

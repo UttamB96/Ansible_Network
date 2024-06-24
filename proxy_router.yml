@@ -13,11 +13,12 @@
     - name: Disable IP SSH ver 1
       cisco.ios.ios_command:
         commands:
-          - command: config t 
+          - command: config t
           - command: no ip ssh ver
     - name: Disable unused services
       cisco.ios.ios_command:
         commands:
+        - command: config t
         - command: no boot network
         - command: no ip boot server
         - command: no ip bootp server
